@@ -3,6 +3,7 @@
   var backgroundLayer, lineLayer, circleLayer, rect;
   var extend = $.extend;
   var dim;
+  var vm;
   var counter = 0;
 
   function Vertex(config) {
@@ -87,35 +88,7 @@
                 // console.log('done');
               }
               else {
-                var pos2 = v.getPosition();
-                var pos1 = prev.getPosition();
-                prev.findOne('Circle').setStroke('');
-                var dx = pos2.x - pos1.x, dy = pos2.y - pos1.y;
-                var angle = Math.atan2(dy, dx);
-                var r = 20;
-
-                var start = {
-                  x: pos1.x + r * Math.cos(angle),
-                  y: pos1.y + r * Math.sin(angle)
-                };
-                var px = dx - 2 * r * Math.cos(angle);
-                var py = dy - 2 * r * Math.sin(angle);
-                var edge = [prev.getAttr('tag'), v.getAttr('tag')];
-                var arrow = new Konva.Arrow({
-                  x: start.x, y: start.y,
-                  points: [
-                    0,0 ,
-                    px, py
-                  ],
-                  pointerLength: 5,
-                  pointerWidth: 5,
-                  fill:'black',
-                  stroke:'black',
-                  strokeWidth: 2,
-                  tag: edge
-                });
-                circleLayer.add(arrow);
-                vm.addEdge(edge[0], edge[1]);
+                addEdge(prev, v);
                 prev = null;
 
               }
@@ -131,7 +104,7 @@
         circleLayer.draw();
       }
     }); //end stage on click...
-    var vm = new ViewModel();
+    vm = new ViewModel();
     ko.applyBindings(vm);
   }, false);
 
@@ -207,5 +180,36 @@
     return stage;
   }
 
+  function addEdge(a, b) {
+    var pos2 = b.getPosition();
+    var pos1 = a.getPosition();
+    a.findOne('Circle').setStroke('');
+    var dx = pos2.x - pos1.x, dy = pos2.y - pos1.y;
+    var angle = Math.atan2(dy, dx);
+    var r = 20;
+
+    var start = {
+      x: pos1.x + r * Math.cos(angle),
+      y: pos1.y + r * Math.sin(angle)
+    };
+    var px = dx - 2 * r * Math.cos(angle);
+    var py = dy - 2 * r * Math.sin(angle);
+    var edge = [a.getAttr('tag'), b.getAttr('tag')];
+    var arrow = new Konva.Arrow({
+      x: start.x, y: start.y,
+      points: [
+        0,0 ,
+        px, py
+      ],
+      pointerLength: 5,
+      pointerWidth: 5,
+      fill:'black',
+      stroke:'black',
+      strokeWidth: 2,
+      tag: edge
+    });
+    circleLayer.add(arrow);
+    vm.addEdge(edge[0], edge[1]);
+  }
 
 })()
