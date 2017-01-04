@@ -9,7 +9,8 @@
       fill: 'black',
       pointerWidth: 5,
       pointerLength: 5,
-      strokeWidth: 2
+      strokeWidth: 2,
+      stroke: 'black'
     });
     this.$init();
   }
@@ -30,11 +31,29 @@
       };
       var r = 20;
       var angle = Math.atan2(d.y, d.x);
-      this.x(from.x() + r * Math.cos(angle));
-      this.y(from.y() + r * Math.sin(angle));
+      var offset = {
+        x: r * Math.cos(angle),
+        y: r * Math.sin(angle)
+      };
+
+      this.x( from.x() + offset.x );
+      this.y( from.y() + offset.y );
+      this.points([0,0, d.x - 2 * offset.x, d.y - 2 * offset.y])
     },
     $init: function() {
       this._draw();
+      var self = this;
+      var from = this._from;
+      var to = this._to;
+
+      var update = function(e) {
+        // console.log('dragmove:', e);
+        self._draw();
+        e.target.parent.draw();
+      }
+
+      from.on('dragmove', update);
+      to.on('dragmove', update);
     }
   };
 

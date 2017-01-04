@@ -21,36 +21,46 @@
       var locals = {
         counter: 0,
       };
-      console.log('init');
+      // console.log('init');
       var self = this;
       var $w = $(window);
       var resize = function() {
+        // console.log('resize...');
         s.h = $w.height();
         s.w = $w.width();
         var offset = $el.offset();
-        var ht = s.h - offset.top,
+        var ht = s.h - offset.top - offset.left,
           wd = $el.parent() ? $el.parent().width() : s.w;
         c.w = wd;
         c.h = ht;
+        // console.log('container:', c);
         stage.width(wd);
         stage.height(ht);
+        if (rect) {
+          console.log('rect', rect);
+          rect.height(ht);
+          rect.width(wd);
+        }
+        stage.draw();
       };
       resize();
 
-      $(w).bind('resize', resize);
+      $w.bind('resize', resize);
       var layer = new Konva.Layer();
       var rect = new Konva.Rect({
         height: c.h,
         width: c.w,
+        stroke: 'black'
       });
       layer.add(rect);
       stage.add(layer);
       stage.on('click', function(e) {
-        console.log('clicked...', e);
+        // console.log('stage click...', e);
         if (e.target === rect) {
           if (self._prev) {
             self._prev.clear();
             self._prev = null;
+            layer.draw();
             return;
           }
           var pos = stage.getPointerPosition();
@@ -73,6 +83,7 @@
       });
       layer.add(vertex);
       vertex.on('click', function(e) {
+        // console.log('vertex click', e);
         if (e.target.parent === vertex) {
           if (self._prev) {
             self.addEdge(self._prev, vertex);
@@ -82,6 +93,7 @@
             self._prev = vertex;
             vertex.highlight();
           }
+          layer.draw();
         }
       });
 

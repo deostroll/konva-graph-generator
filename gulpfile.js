@@ -13,14 +13,14 @@ gulp.task('serve', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('app/index.html', function() {
-    return gulp.src('app/*.*').pipe(connect.reload());
+  var files = ['index.html', 'main.js', 'style.css'];
+  var opts = { cwd: 'app/'};
+
+  gulp.watch(files, opts, function() {
+    return gulp.src(files, opts).pipe(connect.reload());
   });
-  gulp.watch(['*.js', '!main.js'], {
-    cwd: 'app/'
-  }, ['concat'], function() {
-    gulp.src('app/*.*').pipe(connect.reload());
-  });
+
+  gulp.watch(['*.js', '!main.js'], opts, ['concat']);
 });
 
 gulp.task('concat', function() {
