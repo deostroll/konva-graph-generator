@@ -10,6 +10,7 @@
     this._init();
     this._nodes = [];
     this._prev = null;
+    this._events = {};
   }
 
   Graph.prototype = {
@@ -98,12 +99,27 @@
       });
 
       layer.draw();
+      self._fire('add', { type: 'vertex', data: vertex });
     },
     addEdge: function(v1, v2) {
+      var self = this;
       var edge = new Konva.Graphs.Edge(v1, v2);
       var layer = this._layer;
       layer.add(edge);
       layer.draw();
+      self._fire('add', { type: 'edge', data: edge });
+    },
+    _fire: function(eventKey) {
+      var events = this._events;
+      var args = [].slice.call(arguments);
+      args.shift();
+      var fn = events[eventKey];
+      if (fn) {
+        fn.apply(this, args);
+      }
+    },
+    on: function(key, fn) {
+      this._events[key] = fn;
     }
   };
   Konva.Graphs = Konva.Graphs || {};

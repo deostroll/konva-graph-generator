@@ -8,10 +8,7 @@
     var groupConfig = {
       draggable: true
     };
-    groupConfig = extend(groupConfig, {
-      x: config.x,
-      y: config.y
-    });
+    groupConfig = extend(groupConfig, config);
     Konva.Group.call(this, groupConfig);
     this.$init(config);
     this.childs = [];
